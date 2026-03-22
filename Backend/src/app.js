@@ -8,12 +8,6 @@ const app = express()
 const __dirname = path.resolve();
 
 // serve dist folder
-app.use(express.static(path.join(__dirname, "../frontend/dist")));
-
-// all routes → frontend
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "../frontend/dist", "index.html"));
-});
 
 app.use(express.json())
 app.use(cookieParser())
@@ -31,6 +25,12 @@ const interviewRouter = require("./routes/interview.routes")
 app.use("/api/auth", authRouter)
 app.use("/api/interview", interviewRouter)
 
+app.use(express.static(path.join(__dirname, "../Frontend/dist")));
+
+// all routes → frontend
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "../Frontend/dist", "index.html"));
+});
 
 
 module.exports = app
