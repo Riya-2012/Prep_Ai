@@ -2,7 +2,7 @@
   "name": "prepAi",
   "version": "1.0.0",
   "scripts": {
-    "start": "node backend/server.js",
-    "build": "cd frontend && npm install && npm run build"
+    "start": "node Backend/server.js",
+    "build": "cd Frontend && npm install && npm run build"
   }
 }
