@@ -18,30 +18,42 @@ const Login = () => {
     }
 
     if(loading){
-        return (<main><h1>Loading.......</h1></main>)
+        return (
+            <main className="auth-main">
+                <div className="auth-loading">
+                    <div className="spinner"></div>
+                    <h2>Loading...</h2>
+                </div>
+            </main>
+        )
     }
 
 
     return (
-        <main>
+        <main className="auth-main">
             <div className="form-container">
-                <h1>Login</h1>
+                <div className="auth-header">
+                    <h1>Welcome Back</h1>
+                    <p>Enter your details to access your account</p>
+                </div>
                 <form onSubmit={handleSubmit}>
                     <div className="input-group">
                         <label htmlFor="email">Email</label>
                         <input
                             onChange={(e) => { setEmail(e.target.value) }}
-                            type="email" id="email" name='email' placeholder='Enter email address' />
+                            type="email" id="email" name='email' placeholder='Enter your email' />
                     </div>
                     <div className="input-group">
                         <label htmlFor="password">Password</label>
                         <input
                             onChange={(e) => { setPassword(e.target.value) }}
-                            type="password" id="password" name='password' placeholder='Enter password' />
+                            type="password" id="password" name='password' placeholder='Enter your password' />
                     </div>
-                    <button className='button primary-button' >Login</button>
+                    <button className='button primary-button' >Sign In</button>
                 </form>
-                <p>Don't have an account? <Link to={"/register"} >Register</Link> </p>
+                <div className="auth-footer">
+                    <p>Don't have an account? <Link to={"/register"} >Create one here</Link></p>
+                </div>
             </div>
         </main>
     )

@@ -8,6 +8,7 @@ import { useNavigate, useParams } from 'react-router'
 const NAV_ITEMS = [
     { id: 'technical', label: 'Technical Questions', icon: (<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>) },
     { id: 'behavioral', label: 'Behavioral Questions', icon: (<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>) },
+    { id: 'practice', label: 'Practice Mode', icon: (<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>) },
     { id: 'roadmap', label: 'Road Map', icon: (<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11" /></svg>) },
 ]
 
@@ -56,6 +57,108 @@ const RoadMapDay = ({ day }) => (
     </div>
 )
 
+const PracticeMode = ({ questions }) => {
+    const [currentIndex, setCurrentIndex] = useState(0)
+    const [userAnswer, setUserAnswer] = useState('')
+    const [evaluation, setEvaluation] = useState(null)
+    const [isEvaluating, setIsEvaluating] = useState(false)
+    const { evaluateAnswer } = useInterview()
+
+    const currentQ = questions[currentIndex]
+
+    const handleNext = () => {
+        if (currentIndex < questions.length - 1) {
+            setCurrentIndex(prev => prev + 1)
+            setUserAnswer('')
+            setEvaluation(null)
+        }
+    }
+
+    const handlePrevious = () => {
+        if (currentIndex > 0) {
+            setCurrentIndex(prev => prev - 1)
+            setUserAnswer('')
+            setEvaluation(null)
+        }
+    }
+
+    const handleSubmit = async () => {
+        if (!userAnswer.trim() || !currentQ) return
+        setIsEvaluating(true)
+        const result = await evaluateAnswer({
+            question: currentQ.question,
+            modelAnswer: currentQ.answer,
+            userAnswer
+        })
+        setEvaluation(result)
+        setIsEvaluating(false)
+    }
+
+    if (!questions || questions.length === 0) return null
+    if (!currentQ) return <div style={{ color: "white" }}>Loading practice questions...</div>
+
+    return (
+        <section className="practice-mode">
+            <div className="practice-mode__header">
+                <h3>Mock Interview Practice</h3>
+                <span className="q-counter">Question {currentIndex + 1} of {questions.length}</span>
+            </div>
+
+            <div className="practice-mode__card">
+                <h4>{currentQ?.question}</h4>
+                <p className="intention">{currentQ?.intention}</p>
+                
+                <textarea 
+                    className="practice-mode__textarea"
+                    placeholder="Type your answer here as if you were speaking to an interviewer..."
+                    value={userAnswer}
+                    onChange={(e) => setUserAnswer(e.target.value)}
+                    disabled={isEvaluating || evaluation}
+                />
+
+                <div className="practice-mode__controls">
+                    <div className="nav-btns">
+                        <button className="btn-outline" onClick={handlePrevious} disabled={currentIndex === 0}>Previous</button>
+                        <button className="btn-outline" onClick={handleNext} disabled={currentIndex === questions.length - 1}>Next</button>
+                    </div>
+                    
+                    {!evaluation && (
+                        <button 
+                            className="button primary-button" 
+                            style={{ width: 'auto', padding: '0.6rem 1.5rem', margin: 0 }}
+                            onClick={handleSubmit} 
+                            disabled={isEvaluating || !userAnswer.trim()}
+                        >
+                            {isEvaluating ? 'Evaluating...' : 'Submit Answer'}
+                        </button>
+                    )}
+                </div>
+            </div>
+
+            {evaluation && (
+                <div className="practice-mode__evaluation">
+                    <div className="eval-header">
+                        <h5>AI Evaluation</h5>
+                        <div className={`score-badge ${evaluation?.score >= 8 ? '' : evaluation?.score >= 5 ? 'mid' : 'low'}`}>
+                            {evaluation?.score}/10
+                        </div>
+                    </div>
+                    <div className="eval-body">
+                        <h6>Feedback</h6>
+                        <p>{evaluation?.feedback}</p>
+                        <h6>How to improve</h6>
+                        <ul>
+                            {evaluation?.improvements?.map((imp, idx) => (
+                                <li key={idx}>{imp}</li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )}
+        </section>
+    )
+}
+
 // ── Main Component ────────────────────────────────────────────────────────────
 const Interview = () => {
     const [ activeNav, setActiveNav ] = useState('technical')
@@ -72,9 +175,12 @@ const Interview = () => {
 
     if (loading || !report) {
         return (
-            <main className='loading-screen'>
-                <h1>Loading your interview plan...</h1>
-            </main>
+            <div className='loading-screen'>
+                <div className="auth-loading">
+                    <div className="spinner"></div>
+                    <h2>Loading Strategy...</h2>
+                </div>
+            </div>
         )
     }
 
@@ -140,6 +246,10 @@ const Interview = () => {
                                 ))}
                             </div>
                         </section>
+                    )}
+
+                    {activeNav === 'practice' && (
+                        <PracticeMode questions={[...(report?.technicalQuestions || []), ...(report?.behavioralQuestions || [])]} />
                     )}
 
                     {activeNav === 'roadmap' && (
