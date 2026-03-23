@@ -1,4 +1,4 @@
-import pdfParse from "pdf-parse";
+import * as pdfParse from "pdf-parse"
 import { generateInterviewReport, generateResumePdf, evaluateAnswer } from "../services/ai.service.js";
 import interviewReportModel from "../models/interviewReport.model.js";
 
