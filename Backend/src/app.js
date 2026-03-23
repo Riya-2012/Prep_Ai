@@ -13,7 +13,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: true,
     credentials: true
 }));
 
@@ -25,10 +25,10 @@ import interviewRouter from "./routes/interview.routes.js";
 app.use("/api/auth", authRouter);
 app.use("/api/interview", interviewRouter);
 
-app.use(express.static(path.join(__dirname, "../Frontend/dist")));
+app.use(express.static(path.join(__dirname, "../../Frontend/dist")));
 
 // all routes → frontend
 app.use((req, res) => {
-    res.sendFile(path.resolve(__dirname, "../Frontend/dist", "index.html"));
+    res.sendFile(path.resolve(__dirname, "../../Frontend/dist", "index.html"));
 });
 export default app; // Use export default instead of module.exports
