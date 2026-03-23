@@ -28,8 +28,7 @@ app.use("/api/interview", interviewRouter);
 app.use(express.static(path.join(__dirname, "../Frontend/dist")));
 
 // all routes → frontend
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "../Frontend/dist", "index.html"));
+app.use((req, res) => {
+    res.sendFile(path.resolve(__dirname, "../Frontend/dist", "index.html"));
 });
-
 export default app; // Use export default instead of module.exports
