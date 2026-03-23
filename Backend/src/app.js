@@ -1,29 +1,29 @@
-const express = require("express")
-const cookieParser = require("cookie-parser")
-const cors = require("cors")
-const path = require("path")
-const app = express()
+import express from "express";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
 
+// ES Module equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const __dirname = path.resolve();
+const app = express();
 
-// serve dist folder
-
-app.use(express.json())
-app.use(cookieParser())
+app.use(express.json());
+app.use(cookieParser());
 app.use(cors({
     origin: "http://localhost:5173",
     credentials: true
-}))
+}));
 
-/* require all the routes here */
-const authRouter = require("./routes/auth.routes")
-const interviewRouter = require("./routes/interview.routes")
-
+/* Import routes - Note the .js extension! */
+import authRouter from "./routes/auth.routes.js";
+import interviewRouter from "./routes/interview.routes.js";
 
 /* using all the routes here */
-app.use("/api/auth", authRouter)
-app.use("/api/interview", interviewRouter)
+app.use("/api/auth", authRouter);
+app.use("/api/interview", interviewRouter);
 
 app.use(express.static(path.join(__dirname, "../Frontend/dist")));
 
@@ -32,5 +32,4 @@ app.get("*", (req, res) => {
   res.sendFile(path.resolve(__dirname, "../Frontend/dist", "index.html"));
 });
 
-
-module.exports = app
+export default app; // Use export default instead of module.exports

@@ -1,6 +1,6 @@
-const pdfParse = require("pdf-parse")
-const { generateInterviewReport, generateResumePdf, evaluateAnswer } = require("../services/ai.service")
-const interviewReportModel = require("../models/interviewReport.model")
+import pdfParse from "pdf-parse";
+import { generateInterviewReport, generateResumePdf, evaluateAnswer } from "../services/ai.service.js";
+import interviewReportModel from "../models/interviewReport.model.js";
 
 
 
@@ -117,4 +117,4 @@ async function evaluateAnswerController(req, res) {
     }
 }
 
-module.exports = { generateInterViewReportController, getInterviewReportByIdController, getAllInterviewReportsController, generateResumePdfController, evaluateAnswerController }
+export { generateInterViewReportController, getInterviewReportByIdController, getAllInterviewReportsController, generateResumePdfController, evaluateAnswerController };

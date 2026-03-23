@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx nodemon server.js",
-    "type": "commonjs"
+    "dev": "npx nodemon server.js"
   },
+  "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",

@@ -1,6 +1,7 @@
 {
   "name": "prepAi",
   "version": "1.0.0",
+  "type": "module",
   "scripts": {
     "start": "node Backend/server.js",
  "build": "cd Backend && npm install && cd ../Frontend && npm install && npm run build"
